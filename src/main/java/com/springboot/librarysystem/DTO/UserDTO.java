@@ -27,14 +27,9 @@ public class UserDTO {
     @Size(max = 12)
     private String personId;
 
-    @NotNull
-    @Size(max = 255)
-    private String uuid;
-
-    public UserDTO(String name, String surname, String personId, String uuid) {
+    public UserDTO(String name, String surname, String personId) {
         this.name = name;
         this.surname = surname;
         this.personId = personId;
-        this.uuid = uuid;
     }
 }

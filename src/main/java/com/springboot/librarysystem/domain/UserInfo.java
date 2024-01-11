@@ -26,9 +26,6 @@ public class UserInfo {
     @Column(unique = true, length = 12)
     private String personId;
 
-    @Column(unique = true)
-    private String uuid;
-
     public UserInfo() {
     }
 
