@@ -18,7 +18,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> findAll() {
+    public List<UserDTO> findAllUsers() {
         List<UserInfo> users = userRepository.findAll(Sort.by("id"));
         return users.stream().map(userInfo -> convertDomainToDTO(userInfo, new UserDTO())).toList();
     }
@@ -31,18 +31,16 @@ public class UserService {
         return userDTO;
     }
 
-    public UserDTO findById(Long id) {
-        UserInfo optionalUserInfo = userRepository.findById(id).orElse(null);
-        if (optionalUserInfo != null) {
-            return convertDomainToDTO(optionalUserInfo, new UserDTO());
+    public UserDTO findUserById(Long id) {
+        UserInfo existUserInfo = userRepository.findById(id).orElse(null);
+        if (existUserInfo != null) {
+            return convertDomainToDTO(existUserInfo, new UserDTO());
         } else return null;
     }
 
-    public UserDTO save(UserDTO userDTO) {
+    public UserDTO saveUser(UserDTO userDTO) {
         UserInfo userInfo = convertDTOToDomain(userDTO);
-
         validateNewUser(userInfo.getPersonId());
-
         return convertDomainToDTO(userInfo, new UserDTO());
     }
 
