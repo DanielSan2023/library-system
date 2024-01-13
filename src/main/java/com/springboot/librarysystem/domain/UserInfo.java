@@ -14,7 +14,8 @@ import java.util.Collection;
 public class UserInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "primary_sequence")
     private Long id;
 
     @Column
@@ -26,22 +27,10 @@ public class UserInfo {
     @Column(unique = true, length = 12)
     private String personId;
 
-    public UserInfo() {
-    }
-
-    public UserInfo(String name, String surname) {
-        this.name = name;
-        this.surname = surname;
-    }
-
     @OneToMany(mappedBy = "borrowedBy")
     private Collection<Book> book;
 
-    public Collection<Book> getBook() {
-        return book;
+    public UserInfo() {
     }
 
-    public void setBook(Collection<Book> book) {
-        this.book = book;
-    }
 }

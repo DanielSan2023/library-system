@@ -1,8 +1,6 @@
 package com.springboot.librarysystem.DTO;
 
 import com.springboot.librarysystem.domain.UserInfo;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -37,8 +35,7 @@ public class BookDTO {
     @NotNull
     private boolean borrowed;
 
-
-    @ManyToOne
-    @JoinColumn(name = "userInfo_id")
+    @NotNull
     private UserInfo borrowedBy;
+
 }

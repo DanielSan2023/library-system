@@ -19,7 +19,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/user/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         UserDTO createdUserDTO = userService.saveUser(userDTO);
         return new ResponseEntity<>(createdUserDTO, HttpStatus.CREATED);
@@ -27,6 +27,7 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
+       // userService.saveUser(new UserDTO("Robin","Hood","123654789963")); //TODO for test
         List<UserDTO> users = userService.findAllUsers();
         if (CollectionUtils.isEmpty(users)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

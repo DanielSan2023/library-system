@@ -2,12 +2,17 @@ package com.springboot.librarysystem.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+
 @Entity
-
+@Getter
+@Setter
+@ToString
+@Data
 public class Book {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +36,16 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "userInfo_id")
     private UserInfo borrowedBy;
+
+    public Book() {
+    }
+
+    public Book(String title, String author, String bookId, String uuid, boolean borrowed) {
+        this.title = title;
+        this.author = author;
+        this.bookId = bookId;
+        this.uuid = uuid;
+        this.borrowed = borrowed;
+    }
 
 }

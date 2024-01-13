@@ -10,7 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
+
 
 @Service
 public class BookService {
@@ -54,6 +55,14 @@ public class BookService {
     public BookDTO saveBook(BookDTO bookDTO) {
         Book newBook = convertDTOToDomain(bookDTO);
         validateNewBook(newBook.getBookId());
+        UUID uuid = UUID.randomUUID();
+        newBook.setUuid(String.valueOf(uuid));
+        bookRepository.save(newBook);
+        return convertDomainToDTO(newBook, new BookDTO());
+    }
+
+    public BookDTO saveBorrowBook(BookDTO bookDTO) {
+        Book newBook = convertDTOToDomain(bookDTO);
         bookRepository.save(newBook);
         return convertDomainToDTO(newBook, new BookDTO());
     }
@@ -63,7 +72,7 @@ public class BookService {
             throw new RuntimeException("BookId length doesn't match. It needs to have exactly: "
                     + CORRECT_LENGTH_BOOK_ID + " characters");
         }
-        if (bookRepository.existBookIdIgnoreCase(bookId)) {
+        if (bookRepository.existsByBookIdIgnoreCase(bookId)) {
             throw new RuntimeException("BookId: " + bookId + " already exists");
         }
     }
@@ -96,7 +105,7 @@ public class BookService {
         validateBookForBorrow(bookId, book, userInfo);
         book.setBorrowedBy(userInfo);
         book.setBorrowed(true);
-        return saveBook(convertDomainToDTO(book, new BookDTO()));
+        return saveBorrowBook(convertDomainToDTO(book, new BookDTO()));
     }
 
     private static void validateBookForBorrow(Long bookId, Book book, UserInfo userInfo) {

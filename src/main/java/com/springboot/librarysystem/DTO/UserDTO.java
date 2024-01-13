@@ -23,6 +23,7 @@ public class UserDTO {
     @NotNull
     @Size(max = 255)
     private String surname;
+
     @NotNull
     @Size(max = 12)
     private String personId;

@@ -41,7 +41,8 @@ public class UserService {
     public UserDTO saveUser(UserDTO userDTO) {
         UserInfo userInfo = convertDTOToDomain(userDTO);
         validateNewUser(userInfo.getPersonId());
-        return convertDomainToDTO(userInfo, new UserDTO());
+
+        return convertDomainToDTO(userRepository.save(userInfo), new UserDTO());
     }
 
     private void validateNewUser(String personId) {
