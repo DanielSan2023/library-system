@@ -27,6 +27,10 @@ public class BookDTO {
     private String author;
 
     @NotNull
+    @Size(max = 12)
+    private String bookId;
+
+    @NotNull
     @Size(max = 255)
     private String uuid;
 

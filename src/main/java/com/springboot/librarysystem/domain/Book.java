@@ -19,6 +19,9 @@ public class Book {
     @Column
     private String author;
 
+    @Column(unique = true, length = 12)
+    private String bookId;
+
     @Column
     private String uuid;
 
