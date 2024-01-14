@@ -28,7 +28,7 @@ public class UserInfo {
     private String personId;
 
     @OneToMany(mappedBy = "borrowedBy")
-    private Collection<Book> book;
+    private Collection<Book> books;
 
     public UserInfo() {
     }

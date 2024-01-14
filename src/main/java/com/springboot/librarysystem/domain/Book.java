@@ -1,5 +1,7 @@
 package com.springboot.librarysystem.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;

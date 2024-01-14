@@ -1,5 +1,7 @@
 package com.springboot.librarysystem.DTO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import com.springboot.librarysystem.domain.UserInfo;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
