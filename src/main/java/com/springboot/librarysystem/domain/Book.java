@@ -1,5 +1,7 @@
 package com.springboot.librarysystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import jakarta.persistence.*;
@@ -35,6 +37,8 @@ public class Book {
     @Column
     private boolean borrowed;
 
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userInfo_id")
     private UserInfo borrowedBy;

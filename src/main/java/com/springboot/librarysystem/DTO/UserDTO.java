@@ -1,11 +1,10 @@
 package com.springboot.librarysystem.DTO;
 
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +28,16 @@ public class UserDTO {
     @NotNull
     @Size(max = 12)
     private String personId;
+
+    private Set<BookDTO> books;
+
+    public Set<BookDTO> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<BookDTO> books) {
+        this.books = books;
+    }
 
     public UserDTO(String name, String surname, String personId) {
         this.name = name;

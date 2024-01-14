@@ -40,4 +40,11 @@ public class BookDTO {
     @NotNull
     private UserInfo borrowedBy;
 
+    public BookDTO(String title, String author, String bookId, String uuid, boolean borrowed) {
+        this.title = title;
+        this.author = author;
+        this.bookId = bookId;
+        this.uuid = uuid;
+        this.borrowed = borrowed;
+    }
 }

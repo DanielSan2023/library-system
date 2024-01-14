@@ -1,10 +1,12 @@
 package com.springboot.librarysystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.*;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -27,8 +29,25 @@ public class UserInfo {
     @Column(unique = true, length = 12)
     private String personId;
 
-    @OneToMany(mappedBy = "borrowedBy")
-    private Collection<Book> books;
+    @JsonIgnore
+    @OneToMany(mappedBy = "borrowedBy",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private Set<Book> books;
+
+    public void addBook(Book book) {
+        if (null == books) {
+            books = new HashSet<>() {
+            };
+        }
+        books.add(book);
+        book.setBorrowedBy(this);
+    }
+
+    public void removeBook(Book book) {
+        books.remove(book);
+        book.setBorrowedBy(null);
+    }
 
     public UserInfo() {
     }

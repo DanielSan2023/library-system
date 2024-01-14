@@ -1,12 +1,17 @@
 package com.springboot.librarysystem.service;
 
+import com.springboot.librarysystem.DTO.BookDTO;
 import com.springboot.librarysystem.DTO.UserDTO;
+import com.springboot.librarysystem.domain.Book;
 import com.springboot.librarysystem.domain.UserInfo;
 import com.springboot.librarysystem.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,7 +33,27 @@ public class UserService {
         userDTO.setName(userInfo.getName());
         userDTO.setSurname(userInfo.getSurname());
         userDTO.setPersonId(userInfo.getPersonId());
+        if (userInfo.getBooks() != null) {
+            Set<BookDTO> bookDTOs = userInfo.getBooks().stream()
+                    .map(book -> convertBookToDTO(book))
+                    .collect(Collectors.toSet());
+            userDTO.setBooks(bookDTOs);
+        }else{
+            userDTO.setBooks(new HashSet<>());
+        }
         return userDTO;
+    }
+
+    private BookDTO convertBookToDTO(Book book) {
+        BookDTO bookDTO = new BookDTO();
+        bookDTO.setId(book.getId());
+        bookDTO.setTitle(book.getTitle());
+        bookDTO.setAuthor(book.getAuthor());
+        bookDTO.setBookId(book.getBookId());
+        bookDTO.setUuid(book.getUuid());
+        bookDTO.setBorrowed(book.isBorrowed());
+        return bookDTO;
+
     }
 
     public UserDTO findUserById(Long id) {
