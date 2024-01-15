@@ -35,20 +35,6 @@ public class UserInfo {
             orphanRemoval = true)
     private Set<Book> books;
 
-    public void addBook(Book book) {
-        if (null == books) {
-            books = new HashSet<>() {
-            };
-        }
-        books.add(book);
-        book.setBorrowedBy(this);
-    }
-
-    public void removeBook(Book book) {
-        books.remove(book);
-        book.setBorrowedBy(null);
-    }
-
     public UserInfo() {
     }
 
