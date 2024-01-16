@@ -22,7 +22,7 @@ public class BookController {
 
     @GetMapping("/books")
     public ResponseEntity<List<BookDTO>> getAllBook() {
-       // bookService.saveBook(new BookDTO("Prsten", "Harry Potter", "123456579987", "someUuid", false));
+        // bookService.saveBook(new BookDTO("Prsten", "Harry Potter", "123456579987", "someUuid", false));
 
         List<BookDTO> allBooks = bookService.getAllBooks();
         if (CollectionUtils.isEmpty(allBooks)) {

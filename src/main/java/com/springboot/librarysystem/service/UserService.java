@@ -38,7 +38,7 @@ public class UserService {
                     .map(book -> convertBookToDTO(book))
                     .collect(Collectors.toSet());
             userDTO.setBooks(bookDTOs);
-        }else{
+        } else {
             userDTO.setBooks(new HashSet<>());
         }
         return userDTO;
