@@ -3,6 +3,7 @@ package com.springboot.librarysystem.controller;
 import com.springboot.librarysystem.DTO.BookDTO;
 import com.springboot.librarysystem.domain.Book;
 import com.springboot.librarysystem.repository.BookRepository;
+import com.springboot.librarysystem.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,13 @@ class BookControllerRestTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         bookRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 //    @Test
@@ -45,7 +50,7 @@ class BookControllerRestTest {
     @Test
     void GIVEN_saved_correct_books_dto_in_db_WHEN_get_book_endpoint_THEN_saved_book_is_returned_and_checked() {
         //GIVEN
-        Long bookDTOId1 = createBook("The Prequel", "Harry Potter", "123056579987", "someUuid", false);
+        Long bookDTOId1 = createBook("The Prequel", "Harry Potter", "123016579987", "someUuid", false);
         Long bookDTOId2 = createBook("The Prisoner of Azkaban", "Harry Potter", "123456579989", "someUuid", false);
         //WHEN
         Book[] actual = restTemplate.getForObject(
@@ -56,7 +61,7 @@ class BookControllerRestTest {
         assertThat(actual[0].getId()).isEqualTo(bookDTOId1);
         assertThat(actual[0].getTitle()).isEqualTo("The Prequel");
         assertThat(actual[0].getAuthor()).isEqualTo("Harry Potter");
-        assertThat(actual[0].getBookId()).isEqualTo("123456579987");
+        assertThat(actual[0].getBookId()).isEqualTo("123016579987");
         assertThat(actual[0].getUuid()).isNotEmpty();
 
         assertThat(actual[1].getId()).isEqualTo(bookDTOId2);
@@ -67,7 +72,7 @@ class BookControllerRestTest {
     }
 
     private Long createBook(String title, String author, String bookId, String uuid, boolean borrowed) {
-        BookDTO bookDTO = new BookDTO("Prsten", "Harry Potter", "123456579987", "someUuid", false);
+        BookDTO bookDTO = new BookDTO(title,author,bookId,uuid,borrowed);
 
         ResponseEntity<BookDTO> response = restTemplate.postForEntity(
                 "http://localhost:" + port + "/api/book/create", bookDTO, BookDTO.class);
