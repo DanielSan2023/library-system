@@ -6,47 +6,41 @@ import com.springboot.librarysystem.domain.Book;
 import com.springboot.librarysystem.domain.UserInfo;
 import com.springboot.librarysystem.repository.BookRepository;
 import com.springboot.librarysystem.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-
+@AllArgsConstructor
 @Service
 public class BookService {
 
+
     public static final int CORRECT_LENGTH_BOOK_ID = 12;
+
     final private BookRepository bookRepository;
-
     final private UserRepository userRepository;
+    private ModelMapper modelMapper;
 
-
-    public BookService(BookRepository bookRepository, UserRepository userRepository) {
-        this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
-    }
 
     public List<BookDTO> getAllBooks() {
         List<Book> books = bookRepository.findAll(Sort.by("id"));
-        return books.stream().map(book -> convertDomainToDTO(book, new BookDTO())).toList();
+        return books.stream().map(book -> convertToDto(book)).toList();
     }
 
-    private BookDTO convertDomainToDTO(Book book, BookDTO bookDTO) {
-        bookDTO.setId(book.getId());
-        bookDTO.setTitle(book.getTitle());
-        bookDTO.setAuthor(book.getAuthor());
-        bookDTO.setBookId(book.getBookId());
-        bookDTO.setUuid(book.getUuid());
-        bookDTO.setBorrowed(book.isBorrowed());
-        bookDTO.setBorrowedBy(book.getBorrowedBy());
-        return bookDTO;
+    private BookDTO convertToDto(Book book) {
+        return modelMapper.map(book, BookDTO.class);
     }
 
     public BookDTO getBookById(Long id) {
         Book existBook = bookRepository.findById(id).orElse(null);
         if (existBook != null) {
-            return convertDomainToDTO(existBook, new BookDTO());
+            return convertToDto(existBook);
         } else {
             return null;
         }
@@ -58,13 +52,13 @@ public class BookService {
         UUID uuid = UUID.randomUUID();
         newBook.setUuid(String.valueOf(uuid));
         bookRepository.save(newBook);
-        return convertDomainToDTO(newBook, new BookDTO());
+        return convertToDto(newBook);
     }
 
     public BookDTO saveBorrowBook(BookDTO bookDTO) {
         Book newBook = convertDTOToDomain(bookDTO);
         bookRepository.save(newBook);
-        return convertDomainToDTO(newBook, new BookDTO());
+        return convertToDto(newBook);
     }
 
     private void validateNewBook(String bookId) {
@@ -78,16 +72,9 @@ public class BookService {
     }
 
     private Book convertDTOToDomain(BookDTO bookDTOSec) {
-        Book bookDomain = new Book();
-        bookDomain.setId(bookDTOSec.getId());
-        bookDomain.setTitle(bookDTOSec.getTitle());
-        bookDomain.setAuthor(bookDTOSec.getAuthor());
-        bookDomain.setBookId(bookDTOSec.getBookId());
-        bookDomain.setUuid(bookDTOSec.getUuid());
-        bookDomain.setBorrowed(bookDTOSec.isBorrowed());
-        bookDomain.setBorrowedBy(bookDTOSec.getBorrowedBy());
-        return bookDomain;
+        return modelMapper.map(bookDTOSec, Book.class);
     }
+
 
     public void updateBookById(Long id, BookDTO updateBook) {
         Book bookDomain = convertDTOToDomain(updateBook);
@@ -103,9 +90,10 @@ public class BookService {
         UserInfo userInfo = userRepository.findById(userId).orElse(null);
 
         validateBookForBorrow(bookId, book, userInfo);
+
         book.setBorrowedBy(userInfo);
         book.setBorrowed(true);
-        return saveBorrowBook(convertDomainToDTO(book, new BookDTO()));
+        return saveBorrowBook(convertToDto(book));
     }
 
     private static void validateBookForBorrow(Long bookId, Book book, UserInfo userInfo) {
@@ -122,13 +110,11 @@ public class BookService {
 
     public BookDTO returnBook(Long bookId) {
         Book book = bookRepository.findById(bookId).orElse(null);
-
         validateBookForReturn(bookId, book);
         book.setBorrowedBy(null);
         book.setBorrowed(false);
         bookRepository.save(book);
-
-        return convertDomainToDTO(book, new BookDTO());
+        return convertToDto(book);
     }
 
     private static void validateBookForReturn(Long bookId, Book book) {

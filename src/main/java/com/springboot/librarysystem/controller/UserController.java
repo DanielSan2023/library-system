@@ -2,6 +2,7 @@ package com.springboot.librarysystem.controller;
 
 import com.springboot.librarysystem.DTO.UserDTO;
 import com.springboot.librarysystem.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -9,15 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
     final private UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/user/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {

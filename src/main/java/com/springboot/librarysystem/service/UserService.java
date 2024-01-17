@@ -5,6 +5,9 @@ import com.springboot.librarysystem.DTO.UserDTO;
 import com.springboot.librarysystem.domain.Book;
 import com.springboot.librarysystem.domain.UserInfo;
 import com.springboot.librarysystem.repository.UserRepository;
+import lombok.AllArgsConstructor;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -13,53 +16,41 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@AllArgsConstructor
 @Service
 public class UserService {
     public static final int CORRECT_LENGTH_PERSON_ID = 12;
-    final private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    final private UserRepository userRepository;
+    private ModelMapper modelMapper;
+
 
     public List<UserDTO> findAllUsers() {
         List<UserInfo> users = userRepository.findAll(Sort.by("id"));
-        return users.stream().map(userInfo -> convertDomainToDTO(userInfo, new UserDTO())).toList();
+        return users.stream().map(userInfo -> convertDomainToDTO(userInfo)).toList();
     }
 
-    UserDTO convertDomainToDTO(UserInfo userInfo, UserDTO userDTO) {
-        userDTO.setId(userInfo.getId());
-        userDTO.setName(userInfo.getName());
-        userDTO.setSurname(userInfo.getSurname());
-        userDTO.setPersonId(userInfo.getPersonId());
-        if (userInfo.getBooks() != null) {
+    UserDTO convertDomainToDTO(UserInfo userInfo) {
+        UserDTO userDTO = modelMapper.map(userInfo, UserDTO.class);
+        if (userInfo.getBooks() == null) {
+            userDTO.setBooks(new HashSet<>());
+        } else {
             Set<BookDTO> bookDTOs = userInfo.getBooks().stream()
                     .map(book -> convertBookToDTO(book))
                     .collect(Collectors.toSet());
             userDTO.setBooks(bookDTOs);
-        } else {
-            userDTO.setBooks(new HashSet<>());
         }
         return userDTO;
     }
 
     private BookDTO convertBookToDTO(Book book) {
-        BookDTO bookDTO = new BookDTO();
-        bookDTO.setId(book.getId());
-        bookDTO.setTitle(book.getTitle());
-        bookDTO.setAuthor(book.getAuthor());
-        bookDTO.setBookId(book.getBookId());
-        bookDTO.setUuid(book.getUuid());
-        bookDTO.setBorrowed(book.isBorrowed());
-        return bookDTO;
-
+        return modelMapper.map(book, BookDTO.class);
     }
 
     public UserDTO findUserById(Long id) {
         UserInfo existUserInfo = userRepository.findById(id).orElse(null);
         if (existUserInfo != null) {
-            return convertDomainToDTO(existUserInfo, new UserDTO());
+            return convertDomainToDTO(existUserInfo);
         } else return null;
     }
 
@@ -67,7 +58,7 @@ public class UserService {
         UserInfo userInfo = convertDTOToDomain(userDTO);
         validateNewUser(userInfo.getPersonId());
 
-        return convertDomainToDTO(userRepository.save(userInfo), new UserDTO());
+        return convertDomainToDTO(userRepository.save(userInfo));
     }
 
     private void validateNewUser(String personId) {
@@ -81,13 +72,7 @@ public class UserService {
     }
 
     UserInfo convertDTOToDomain(UserDTO userDTO) {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setId(userDTO.getId());
-        userInfo.setName(userDTO.getName());
-        userInfo.setSurname(userDTO.getSurname());
-        userInfo.setPersonId(userDTO.getPersonId());
-        return userInfo;
+        return modelMapper.map(userDTO, UserInfo.class);
     }
-
 
 }
