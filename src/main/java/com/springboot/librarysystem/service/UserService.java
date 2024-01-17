@@ -49,9 +49,9 @@ public class UserService {
 
     public UserDTO findUserById(Long id) {
         UserInfo existUserInfo = userRepository.findById(id).orElse(null);
-        if (existUserInfo != null) {
-            return convertDomainToDTO(existUserInfo);
-        } else return null;
+        if (existUserInfo == null) {
+            return null;
+        } else return convertDomainToDTO(existUserInfo);
     }
 
     public UserDTO saveUser(UserDTO userDTO) {

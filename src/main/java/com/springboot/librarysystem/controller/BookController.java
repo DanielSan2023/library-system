@@ -61,7 +61,7 @@ public class BookController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{bookId}/borrow/{userId}")
+    @PutMapping("/{bookId}/borrow/{userId}")
     public ResponseEntity<BookDTO> borrowBook(@PathVariable Long bookId, @PathVariable Long userId) {
         BookDTO borrowedBook = bookService.borrowBook(bookId, userId);
         if (borrowedBook == null) {
@@ -71,7 +71,7 @@ public class BookController {
         }
     }
 
-    @PostMapping("/book/{bookId}/return")
+    @PutMapping("/book/{bookId}/return")
     public ResponseEntity<BookDTO> returnBook(@PathVariable Long bookId) {
         BookDTO returnedBook = bookService.returnBook(bookId);
         if (returnedBook == null) {

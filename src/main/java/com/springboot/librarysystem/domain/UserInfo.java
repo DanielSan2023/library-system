@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.util.Set;
 
-
 @Entity
 @Getter
 @Setter
@@ -33,6 +32,14 @@ public class UserInfo {
             cascade = CascadeType.PERSIST,
             orphanRemoval = true)
     private Set<Book> books;
+
+    public Set<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Set<Book> books) {
+        this.books = books;
+    }
 
     public UserInfo() {
     }
