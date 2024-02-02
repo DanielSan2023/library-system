@@ -9,18 +9,22 @@ import com.springboot.librarysystem.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+@ActiveProfiles("test")
 class SmokeTest {
 
     @LocalServerPort
@@ -34,6 +38,7 @@ class SmokeTest {
 
     @Autowired
     private UserRepository userRepository;
+
 
     @BeforeEach
     void setUp() {
@@ -52,8 +57,7 @@ class SmokeTest {
         Long bookDTOId2 = createBook("The Prisoner of Azkaban", "Harry Potter", "123456579989", "someUuid", false);
 
         //WHEN Call  Get request getALlBooks
-        Book[] actualBook = restTemplate.getForObject(
-                "http://localhost:" + port + "/api/books", Book[].class);
+        Book[] actualBook = restTemplate.getForObject("http://localhost:" + port + "/api/books", Book[].class);
 
         //THEN Check books
         assertThat(actualBook).hasSize(2);
@@ -75,8 +79,7 @@ class SmokeTest {
         Long userDTOId = createUser("Jack", "Sparrow", "321654987123");
 
         //WHEN Call  Get request getALlUsers
-        UserInfo[] actualUser = restTemplate.getForObject(
-                "http://localhost:" + port + "/api/users", UserInfo[].class);
+        UserInfo[] actualUser = restTemplate.getForObject("http://localhost:" + port + "/api/users", UserInfo[].class);
 
         //THEN Check user
         assertThat(actualUser).isNotEmpty().hasSize(1);
@@ -86,9 +89,7 @@ class SmokeTest {
         assertThat(actualUser[0].getPersonId()).isEqualTo("321654987123");
 
         //WHEN Call request where user borrow the book
-        ResponseEntity<BookDTO> bookWithUser = restTemplate.exchange(
-                "http://localhost:" + port + "/api/{bookId}/borrow/{userId}", HttpMethod.PUT, new HttpEntity<>(actualUser),
-                BookDTO.class, bookDTOId1, userDTOId);
+        ResponseEntity<BookDTO> bookWithUser = restTemplate.exchange("http://localhost:" + port + "/api/{bookId}/borrow/{userId}", HttpMethod.POST, new HttpEntity<>(actualUser), BookDTO.class, bookDTOId1, userDTOId);
 
         //THEN Check bookWithUser
         assertThat(Objects.requireNonNull(bookWithUser.getBody()).getBorrowedBy()).isNotNull();
@@ -97,11 +98,9 @@ class SmokeTest {
 
 
         //WHEN Call request getBookById and getUserById
-        BookDTO updatedBook = restTemplate.getForEntity(
-                "http://localhost:" + port + "/api/book/{id}", BookDTO.class, bookWithUser.getBody().getId()).getBody();
+        BookDTO updatedBook = restTemplate.getForEntity("http://localhost:" + port + "/api/book/{id}", BookDTO.class, bookWithUser.getBody().getId()).getBody();
 
-        UserDTO updatedUser = restTemplate.getForEntity(
-                "http://localhost:" + port + "/api/user/{id}", UserDTO.class, actualUser[0].getId()).getBody();
+        UserDTO updatedUser = restTemplate.getForEntity("http://localhost:" + port + "/api/user/{id}", UserDTO.class, actualUser[0].getId()).getBody();
 
         //THEN Check updatedUser and updatedBook
         assertThat(Objects.requireNonNull(updatedBook).getBorrowedBy()).isNotNull();
@@ -116,26 +115,22 @@ class SmokeTest {
 
 
         //WHEN Call request for returnBook
-        restTemplate.delete("http://localhost:" + port + "/api/user/{id}/return", HttpMethod.DELETE,
-                null, Void.class, Objects.requireNonNull(bookDTOId1));
+        restTemplate.delete("http://localhost:" + port + "/api/user/{id}/return", HttpMethod.DELETE, null, Void.class, Objects.requireNonNull(bookDTOId1));
 
         //WHEN Call request getBookById and getUserById
-        BookDTO returnedBook = restTemplate.getForEntity(
-                "http://localhost:" + port + "/api/book/{id}", BookDTO.class, updatedBook.getId()).getBody();
+        BookDTO returnedBook = restTemplate.getForEntity("http://localhost:" + port + "/api/book/{id}", BookDTO.class, updatedBook.getId()).getBody();
 
-        UserDTO userWithNoBook = restTemplate.getForEntity(
-                "http://localhost:" + port + "/api/user/{id}", UserDTO.class, actualUser[0].getId()).getBody();
+        UserDTO userWithNoBook = restTemplate.getForEntity("http://localhost:" + port + "/api/user/{id}", UserDTO.class, actualUser[0].getId()).getBody();
 
         //THEN check book and user
-           //     assertThat(returnedBook.getBorrowedBy()).isNull();
+        //     assertThat(returnedBook.getBorrowedBy()).isNull();
 
     }
 
     private Long createUser(String name, String surname, String personId) {
         UserDTO userDTO = new UserDTO(name, surname, personId);
 
-        ResponseEntity<UserDTO> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/user/create", userDTO, UserDTO.class);
+        ResponseEntity<UserDTO> response = restTemplate.postForEntity("http://localhost:" + port + "/api/user/create", userDTO, UserDTO.class);
 
         return Objects.requireNonNull(response.getBody()).getId();
     }
@@ -143,8 +138,7 @@ class SmokeTest {
     private Long createBook(String title, String author, String bookId, String uuid, boolean borrowed) {
         BookDTO bookDTO = new BookDTO(title, author, bookId, uuid, borrowed);
 
-        ResponseEntity<BookDTO> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/book/create", bookDTO, BookDTO.class);
+        ResponseEntity<BookDTO> response = restTemplate.postForEntity("http://localhost:" + port + "/api/book/create", bookDTO, BookDTO.class);
 
         return Objects.requireNonNull(response.getBody()).getId();
 
